@@ -1,0 +1,106 @@
+# PSY Housing Bubble Detector
+
+A desktop tool and research workflow for PSY-based housing bubble detection using monthly housing price series.
+
+## Overview
+
+This repository provides a practical tool for implementing the Phillips–Shi–Yu (PSY) bubble detection framework on monthly housing price data. It is designed to support empirical dissertation or coursework analysis, especially for comparative urban housing market research.
+
+The tool allows users to:
+
+- import monthly housing price data from Excel or CSV files
+- compute PSY-style BSADF sequences
+- generate 95% Monte Carlo critical-value sequences from simulated random walks
+- identify bubble episodes based on threshold crossings
+- export summary tables, episode dating tables, and city-level PSY plots
+
+This project was developed as part of a dissertation-related research workflow on housing bubble measurement and early warning in Chinese cities.
+
+## Main Features
+
+- Cross-platform Python desktop application
+- Supports Windows and macOS
+- Accepts structured monthly housing price data
+- Automatically performs:
+  - log transformation of price series
+  - missing-value interpolation
+  - BSADF sequence estimation
+  - Monte Carlo critical-value simulation
+  - bubble episode dating
+- Exports:
+  - summary tables
+  - episode dating tables
+  - PSY charts for each city
+  - Excel workbook with results
+
+## Input Data Format
+
+The input file must contain at least the following columns:
+
+- `Year`
+- `Month`
+
+and one or more city price columns, for example:
+
+- `Beijing`
+- `Shanghai`
+- `Hangzhou`
+- `Changsha`
+- `Jinan`
+- `Chengdu`
+
+### Example
+
+| Year | Month | Beijing | Shanghai |
+|------|-------|---------|----------|
+| 2010 | 1     | 21872   | 20154    |
+| 2010 | 2     | 21980   | 20236    |
+
+Notes:
+
+- `Year` and `Month` must be numeric
+- the first row must be the header row
+- avoid merged cells, title rows, or extra notes in the input file
+- missing price values may be left blank
+
+## Methodological Logic
+
+The application follows a practical PSY-style workflow:
+
+1. organise monthly housing price series into continuous time order
+2. interpolate a very small number of missing observations
+3. transform prices into natural logarithms
+4. compute the BSADF sequence using recursive right-tailed ADF regressions
+5. simulate random-walk benchmark series with the same sample length
+6. generate a 95% Monte Carlo critical-value sequence
+7. compare actual BSADF values with simulated critical values
+8. identify bubble episodes when BSADF exceeds the critical threshold for a minimum number of consecutive periods
+
+## Minimum Rolling Window
+
+The default minimum rolling window is based on:
+
+\[
+r_0 = 0.01 + \frac{1.8}{\sqrt{T}}
+\]
+
+where \(T\) is the total sample length.
+
+The application converts this rolling-window fraction into an integer window length in months.
+
+## Monte Carlo Critical Values
+
+The default setting uses:
+
+- 1,000 simulated random-walk paths
+- same sample length as the original housing price series
+- 95th percentile simulated BSADF values as the critical-value sequence
+
+This allows the actual BSADF path to be compared against a no-bubble benchmark.
+
+## Installation
+
+Install Python 3 first, then install the required packages:
+
+```bash
+pip install numpy pandas matplotlib openpyxl
